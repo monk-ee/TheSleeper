@@ -1,0 +1,12 @@
+credentials:
+ name              : ''
+ aws_access_key    : ''
+ aws_secret_key    : ''
+
+general:
+ region            : 'ap-southeast-2'
+ format: 'standard'
+ filter: 'TimeStartStop'
+ time_zone: 'Australia/Brisbane'
+ debug: 'true'
+ logfile: 'thesleeper.log'
