@@ -28,3 +28,7 @@ If you want to just stop the instance  at 9pm weekdays and leave the start to a 
 If you want to ensure that the resource is not stopped add the following value:
 
      pass
+
+Configuration
+==========
+Add your secret API details to the config.yml.sample and rename config.yml
