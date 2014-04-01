@@ -32,3 +32,8 @@ If you want to ensure that the resource is not stopped add the following value:
 Configuration
 ==========
 Add your secret API details to the config.yml.sample and rename config.yml
+
+
+Author
+==========
+Contact me on twitter @monkee_magic
