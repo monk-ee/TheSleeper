@@ -19,15 +19,15 @@ class thesleeper:
         time.tzset()
         self.time = time.time()
         try:
-            configStr = open('config.yml', 'r')
+            configStr = open(os.path.dirname(__file__) + '/config.yml', 'r')
             self.config = yaml.load(configStr)
         except Exception as error:
             #we are done
             print ("Unexpected error:" + str(error))
             exit("Failed Configuration")
-        logging.basicConfig(filename=self.config['general']['logfile'],level=logging.INFO)
+        logging.basicConfig(filename=os.path.dirname(__file__) + "/" + self.config['general']['logfile'], level=logging.INFO)
         try:
-            self.conn = boto.ec2.connect_to_region(self.config['general']['region'],aws_access_key_id=self.config['credentials']['aws_access_key'], aws_secret_access_key=self.config['credentials']['aws_secret_key'])
+            self.conn = boto.ec2.connect_to_region(self.config['general']['region'], aws_access_key_id=self.config['credentials']['aws_access_key'], aws_secret_access_key=self.config['credentials']['aws_secret_key'])
         except:
             #done again
             exit("Failed to connect to EC2")
