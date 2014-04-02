@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Requires: your boto config file (~/.boto) to contain your aws credentials
+#
+# [Credentials]
+# aws_access_key_id = <your access key>
+# aws_secret_access_key = <your secret key>
 
 __author__ = 'monkee'
 import boto.ec2
@@ -27,7 +34,7 @@ class thesleeper:
             exit("Failed Configuration")
         logging.basicConfig(filename=os.path.dirname(__file__) + "/" + self.config['general']['logfile'], level=logging.INFO)
         try:
-            self.conn = boto.ec2.connect_to_region(self.config['general']['region'], aws_access_key_id=self.config['credentials']['aws_access_key'], aws_secret_access_key=self.config['credentials']['aws_secret_key'])
+            self.conn = boto.ec2.connect_to_region(self.config['general']['region'])
         except:
             #done again
             exit("Failed to connect to EC2")
