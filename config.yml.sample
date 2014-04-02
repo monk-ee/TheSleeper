@@ -5,4 +5,5 @@ general:
  time_zone: 'Australia/Brisbane'
  debug: False
  threshold: 300
+ sns_topic:
  logfile: 'thesleeper.log'

@@ -8,7 +8,7 @@
 # aws_secret_access_key = <your secret key>
 
 __author__ = 'monkee'
-import boto.ec2
+import boto.ec2, boto.sns
 from datetime import date
 import yaml, sys,logging,time,os
 from croniter import croniter
@@ -37,16 +37,32 @@ class thesleeper:
         logging.basicConfig(filename=logfile, level=logging.INFO)
         try:
             self.conn = boto.ec2.connect_to_region(self.config['general']['region'])
+            self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
         except:
             #done again
             exit("Failed to connect to EC2")
+        try:
+            self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
+        except:
+            #done again
+            #no sns configured or some issue
+            pass
 
-    def stop_instance(self,instance):
+
+    def stop_instance(self, instance):
         if instance.state == "running":
+            try:
+                self.snsconn.publish(self.config['general']['sns_topic'], instance, "Stopping Instance -" + str(instance.id))
+            except:
+                pass
             instance.stop()
 
-    def start_instance(self,instance):
+    def start_instance(self, instance):
         if instance.state != "running":
+            try:
+                self.snsconn.publish(self.config['general']['sns_topic'], instance, "Starting Instance -" + str(instance.id))
+            except:
+                pass
             instance.start()
 
     def search_for_tagged(self):
