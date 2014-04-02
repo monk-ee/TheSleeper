@@ -6,7 +6,8 @@ An AMI stop/start utility that parses a cron style tag for control
 
 Tag Guide
 ==========
- + A tag needs to be added to each resource you wish to stop, the format is *TimeStartStop*. This should be managed by cloudformation or orchestration.
+ + A tag needs to be added to each resource you wish to stop, the format is *TimeStartStop*.
+ + This should (must) be managed by cloudformation or orchestration.
  + A minimum default of shutdown should be set UNLESS the resource must run all the time eg a utility server. A good default is: 0 21 * * *
 
 
