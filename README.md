@@ -41,6 +41,18 @@ Requires: your boto config file (~/.boto) to contain your aws credentials
  + You shouldn't need to change threshold unless you change the cron timing -
      the threshold is the time in seconds past the action that you schedule  - it allows for clock drift etc
 
+Proxy
+==========
+You may need to add proxy information to your .boto file
+
+    [Boto]
+    debug = 0
+    num_retries = 10
+
+    proxy = myproxy.com
+    proxy_port = 8080
+
+
 Cron Configuration
 ==========
 
