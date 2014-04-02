@@ -56,6 +56,11 @@ Cron Configuration
 
     */5 * * * * /opt/TheSleeper/thesleeper.py >> /opt/TheSleeper/cron.log 2&>1
 
+SNS Topic
+==========
+You can configure an AWS SNS Topic, then you can publish to email or whatever.
+Add your Topic ARN to the config.yml and I am assuming you have setup the SNS Stuff.
+
 Author
 ==========
 Contact me on twitter @monkee_magic
