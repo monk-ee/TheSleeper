@@ -114,7 +114,6 @@ class thesleeper:
              sys.exit(2)
 
     def cron_start(self,instance,value):
-        print(instance)
         try:
             iter = croniter(value,self.time)
             point = iter.get_next(float)
