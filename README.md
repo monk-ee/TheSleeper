@@ -31,7 +31,14 @@ If you want to ensure that the resource is not stopped add the following value:
 
 Configuration
 ==========
-Add your secret API details to the config.yml.sample and rename config.yml
+Requires: your boto config file (~/.boto) to contain your aws credentials
+
+    [Credentials]
+    aws_access_key_id = <your access key>
+    aws_secret_access_key = <your secret key>
+
+ + You may need to change your region and timezone.
+ + You shouldn't
 
 Cron Configuration
 ==========

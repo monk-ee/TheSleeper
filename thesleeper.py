@@ -22,12 +22,13 @@ class thesleeper:
     time = ""
 
     def __init__(self):
-        os.environ["TZ"]="Australia/Brisbane"
-        time.tzset()
-        self.time = time.time()
+
         try:
             configStr = open(os.path.dirname(__file__) + '/config.yml', 'r')
             self.config = yaml.load(configStr)
+            os.environ["TZ"]=self.config['general']['time_zone']
+            time.tzset()
+            self.time = time.time()
         except Exception as error:
             #we are done
             print ("Unexpected error:" + str(error))
