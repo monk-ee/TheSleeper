@@ -1,15 +1,12 @@
 TheSleeper
 ==========
 
-A AMI stop/start utility that parses a cron style tag for control
+An AMI stop/start utility that parses a cron style tag for control
 
-Intro
-==========
-A python utility server runs "TheSleeper" a scheduler that parses cron like commands to shutdown and start instances.
 
-Step-by-step guide
+Tag Guide
 ==========
- + A tag needs to be added to each resource you wish to stop, the format is 'Time Start/Stop'. This should be managed by cloudformation or orchestration.
+ + A tag needs to be added to each resource you wish to stop, the format is *TimeStartStop*. This should be managed by cloudformation or orchestration.
  + A minimum default of shutdown should be set UNLESS the resource must run all the time eg a utility server. A good default is: 0 21 * * *
 
 
