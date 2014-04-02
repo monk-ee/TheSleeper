@@ -38,7 +38,8 @@ Requires: your boto config file (~/.boto) to contain your aws credentials
     aws_secret_access_key = <your secret key>
 
  + You may need to change your region and timezone.
- + You shouldn't
+ + You shouldn't need to change threshold unless you change the cron timing -
+     the threshold is the time in seconds past the action that you schedule  - it allows for clock drift etc
 
 Cron Configuration
 ==========
