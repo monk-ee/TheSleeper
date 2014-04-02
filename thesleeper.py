@@ -25,7 +25,7 @@ class thesleeper:
             #we are done
             print ("Unexpected error:" + str(error))
             exit("Failed Configuration")
-        logging.basicConfig(filename=self.config['general']['logfile'],level=logging.DEBUG)
+        logging.basicConfig(filename=self.config['general']['logfile'],level=logging.INFO)
         try:
             self.conn = boto.ec2.connect_to_region(self.config['general']['region'],aws_access_key_id=self.config['credentials']['aws_access_key'], aws_secret_access_key=self.config['credentials']['aws_secret_key'])
         except:
