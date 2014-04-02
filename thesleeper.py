@@ -20,6 +20,8 @@ class thesleeper:
     config = ""
     timestamp = time.strftime("%d/%m/%Y %H:%M:%S")
     time = ""
+    sns_stop = list()
+    sns_start = list()
 
     def __init__(self):
 
@@ -51,18 +53,12 @@ class thesleeper:
 
     def stop_instance(self, instance):
         if instance.state == "running":
-            try:
-                self.snsconn.publish(self.config['general']['sns_topic'], instance, "Stopping Instance -" + str(instance.id))
-            except:
-                pass
+            self.sns_stop.append(instance.id)
             instance.stop()
 
     def start_instance(self, instance):
-        if instance.state != "running":
-            try:
-                self.snsconn.publish(self.config['general']['sns_topic'], instance, "Starting Instance -" + str(instance.id))
-            except:
-                pass
+        if instance.state == "stopped":
+            self.sns_start.append(instance.id)
             instance.start()
 
     def search_for_tagged(self):
@@ -118,8 +114,7 @@ class thesleeper:
              sys.exit(2)
 
     def cron_start(self,instance,value):
-        return
-        print("start " + str(self.timestamp) + " " + str(self.time))
+        print(instance)
         try:
             iter = croniter(value,self.time)
             point = iter.get_next(float)
@@ -131,9 +126,24 @@ class thesleeper:
              logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
              sys.exit(2)
 
+    def sns_message(self):
+        message = ""
+
+        for item in self.sns_start:
+            message += "Started Instance:" + item + "\n"
+        for item in self.sns_stop:
+            message += "Stopped Instance:" + item + "\n"
+
+        if message != "":
+            try:
+                self.snsconn.publish(self.config['general']['sns_topic'], message, "TheSleeper was invoked")
+            except:
+                pass
+
 
 if __name__ == "__main__":
     thesleeper = thesleeper()
     thesleeper.search_for_untagged_to_stop()
     thesleeper.search_for_tagged()
+    thesleeper.sns_message()
 
