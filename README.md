@@ -66,3 +66,8 @@ It will aggregrate a series of stop/start actions into a single topic push. (Tha
 Author
 ==========
 Contact me on twitter @monkee_magic
+
+TODO
+==========
+@todo Rate Limit this puppy
+@todo randomize start / stop inits when there are lots of servers
