@@ -61,6 +61,8 @@ SNS Topic
 You can configure an AWS SNS Topic, then you can publish to email or whatever.
 Add your Topic ARN to the config.yml and I am assuming you have setup the SNS Stuff.
 
+It will aggregrate a series of stop/start actions into a single topic push. (Thanks Mark)
+
 Author
 ==========
 Contact me on twitter @monkee_magic
