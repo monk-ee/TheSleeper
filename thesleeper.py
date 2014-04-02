@@ -32,7 +32,8 @@ class thesleeper:
             #we are done
             print ("Unexpected error:" + str(error))
             exit("Failed Configuration")
-        logging.basicConfig(filename=os.path.dirname(__file__) + "/" + self.config['general']['logfile'], level=logging.INFO)
+        logfile = os.path.dirname(__file__) + "/" + self.config['general']['logfile']
+        logging.basicConfig(filename=logfile, level=logging.INFO)
         try:
             self.conn = boto.ec2.connect_to_region(self.config['general']['region'])
         except:
