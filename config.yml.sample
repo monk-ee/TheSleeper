@@ -8,5 +8,6 @@ general:
  format: 'standard'
  filter: 'TimeStartStop'
  time_zone: 'Australia/Brisbane'
- debug: 'true'
+ debug: False
+ threshold: 300
  logfile: 'thesleeper.log'

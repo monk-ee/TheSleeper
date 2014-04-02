@@ -33,6 +33,10 @@ Configuration
 ==========
 Add your secret API details to the config.yml.sample and rename config.yml
 
+Cron Configuration
+==========
+
+    */5 * * * * /opt/TheSleeper/thesleeper.py >> /opt/TheSleeper/cron.log 2&>1
 
 Author
 ==========

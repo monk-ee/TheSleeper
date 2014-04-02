@@ -86,7 +86,7 @@ class thesleeper:
             point = iter.get_next(float)
             newpoint = iter.get_prev(float)
             misspast = newpoint - self.time
-            if (misspast < 0) and (misspast > -300):
+            if (misspast < 0) and (misspast > -self.config['general']['threshold']):
                 self.stop_instance(instance)
         except (BaseException) as emsg:
              logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
@@ -100,7 +100,7 @@ class thesleeper:
             point = iter.get_next(float)
             newpoint = iter.get_prev(float)
             misspast = newpoint - self.time
-            if (misspast < 0) and (misspast > -300):
+            if (misspast < 0) and (misspast > -self.config['general']['threshold']):
                 self.start_instance(instance)
         except (BaseException) as emsg:
              logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
