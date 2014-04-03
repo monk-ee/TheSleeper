@@ -64,6 +64,7 @@ Add your Topic ARN to the config.yml and I am assuming you have setup the SNS St
 
 It will aggregrate a series of stop/start actions into a single topic push. (Thanks Mark)
 
+
 Dependencies
 ==========
  + PyYAML==3.10
