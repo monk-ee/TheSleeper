@@ -66,9 +66,9 @@ It will aggregrate a series of stop/start actions into a single topic push. (Tha
 
 Dependencies
 ==========
-PyYAML==3.10
-boto==2.27.0
-croniter==0.3.4
+ + PyYAML==3.10
+ + boto==2.27.0
+ + croniter==0.3.4
 
 
 Author
