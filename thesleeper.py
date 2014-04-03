@@ -13,9 +13,7 @@ from datetime import date
 import yaml, sys,logging,time,os
 from croniter import croniter
 
-
-
-class thesleeper:
+class TheSleeper:
     conn = ""
     config = ""
     timestamp = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -141,7 +139,7 @@ class thesleeper:
 
 
 if __name__ == "__main__":
-    thesleeper = thesleeper()
+    thesleeper = TheSleeper()
     thesleeper.search_for_untagged_to_stop()
     thesleeper.search_for_tagged()
     thesleeper.sns_message()
