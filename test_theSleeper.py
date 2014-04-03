@@ -1,6 +1,8 @@
 from unittest import TestCase
+from TheSleeper import TheSleeper
 
 __author__ = 'monkee'
+__project__ = 'TheSleeper'
 
 
 class TestTheSleeper(TestCase):
