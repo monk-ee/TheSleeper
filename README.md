@@ -77,6 +77,6 @@ Contact me on twitter @monkee_magic
 
 TODO
 ==========
-@todo Rate Limit this puppy
-@todo randomize start / stop inits when there are lots of servers
-@todo setup the sns topic and subscription with boto
+ + @todo Rate Limit this puppy
+ + @todo randomize start / stop inits when there are lots of servers
+ + @todo setup the sns topic and subscription with boto
