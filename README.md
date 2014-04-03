@@ -3,6 +3,7 @@ TheSleeper
 
 An AMI stop/start utility that parses a cron style tag for control
 
+![ScreenShot](https://raw.github.com/monk-ee/TheSleeper/master/images/sleeper.png)
 
 Tag Guide
 ==========
@@ -63,6 +64,13 @@ Add your Topic ARN to the config.yml and I am assuming you have setup the SNS St
 
 It will aggregrate a series of stop/start actions into a single topic push. (Thanks Mark)
 
+Dependencies
+==========
+PyYAML==3.10
+boto==2.27.0
+croniter==0.3.4
+
+
 Author
 ==========
 Contact me on twitter @monkee_magic
@@ -71,3 +79,4 @@ TODO
 ==========
 @todo Rate Limit this puppy
 @todo randomize start / stop inits when there are lots of servers
+@todo setup the sns topic and subscription with boto
