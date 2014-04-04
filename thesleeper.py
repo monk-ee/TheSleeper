@@ -23,23 +23,26 @@ class TheSleeper:
     sns_start = list()
 
     def __init__(self):
-
         self.load_configuration()
         self.set_timezone()
         self.ec2_connect()
         self.sns_connect()
-        self.search_for_untagged_to_stop()
+        if self.config['general']['shutdown_untagged'] is True:
+            self.search_for_untagged_to_stop()
         self.search_for_tagged()
         self.sns_message()
 
     def load_configuration(self):
         try:
-            configStr = open(os.path.dirname(__file__) + '/config.yml', 'r')
-            self.config = yaml.load(configStr)
+            config_str = open(os.path.dirname(__file__) + '/config.yml', 'r')
+            self.config = yaml.load(config_str)
             logfile = os.path.dirname(__file__) + "/" + self.config['general']['logfile']
             logging.basicConfig(filename=logfile, level=logging.INFO)
-        except BaseException as error:
-            exit("Could not find, parse or load config.yml")
+        except IOError as error:
+            exit("Could not load config.yml: " + str(error))
+        except:
+            raise
+            exit("Unexpected error:" + str(sys.exc_info()[0]))
 
     def set_timezone(self):
         try:
@@ -47,7 +50,7 @@ class TheSleeper:
             time.tzset()
             self.time = time.time()
         except Exception as error:
-            exit("Could not find, parse or load config.yml")
+            exit("Could not set time related stuff- very bad")
 
     def ec2_connect(self):
         try:
@@ -62,6 +65,7 @@ class TheSleeper:
             self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
         except:
             #done again
+            logging.warning(self.timestamp + ': No SNS configured correctly - carry on - ' + str(emsg))
             #no sns configured or some issue
             pass
 
@@ -72,7 +76,7 @@ class TheSleeper:
                 self.search_sleeper_tags(reserve.instances[0])
         except (BaseException) as emsg:
              logging.warning(self.timestamp + ': Cannot search for instances ' + str(emsg))
-             sys.exit(2)
+             sys.exit("Cannot search for instances/reservations")
 
     def search_for_untagged_to_stop(self):
         try:
@@ -81,8 +85,8 @@ class TheSleeper:
                 if self.config['general']['filter'] not in reserve.instances[0].__dict__['tags']:
                     self.stop_instance(reserve.instances[0])
         except (BaseException) as emsg:
-             logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
-             sys.exit(2)
+             logging.warning(self.timestamp + ': Untagged stop exception - not critical' + str(emsg))
+             pass
 
     def search_sleeper_tags(self,instance):
         value = instance.__dict__['tags'][self.config['general']['filter']]
@@ -104,34 +108,40 @@ class TheSleeper:
                 elif i == 1:
                     self.cron_start(instance,v)
         except (BaseException) as emsg:
-             logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
-             sys.exit(2)
+             logging.warning(self.timestamp + ': Could not parse tags - carry on ' + str(emsg))
+             pass
 
     def cron_stop(self,instance,value):
         try:
             misspast = self.return_misspast(value)
+            if misspast is False:
+                return
             if (misspast < 0) and (misspast > -self.config['general']['threshold']):
                 self.stop_instance(instance)
         except (BaseException) as emsg:
-             logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
-             sys.exit(2)
+            logging.warning(self.timestamp + ': Cron Stop Failed on a value ' + str(emsg))
+            pass
 
     def cron_start(self,instance,value):
         try:
             misspast = self.return_misspast(value)
+            if misspast is False:
+               return
             if (misspast < 0) and (misspast > -self.config['general']['threshold']):
                 self.start_instance(instance)
         except (BaseException) as emsg:
-             logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
-             sys.exit(2)
+            logging.warning(self.timestamp + ': Cron start failed on a value ' + str(emsg))
+            pass
 
     def return_misspast(self,value):
-        iter = croniter(value,self.time)
-        point = iter.get_next(float)
-        newpoint = iter.get_prev(float)
-        misspast = newpoint - self.time
-        return misspast
-
+        try:
+            iter = croniter(value,self.time)
+            point = iter.get_next(float)
+            newpoint = iter.get_prev(float)
+            misspast = newpoint - self.time
+            return misspast
+        except:
+            return False
 
     def stop_instance(self, instance):
         if instance.state == "running":
