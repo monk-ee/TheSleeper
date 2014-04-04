@@ -8,39 +8,56 @@
 # aws_secret_access_key = <your secret key>
 
 __author__ = 'monkee'
+__project__ = 'TheSleeper'
+
 import boto.ec2, boto.sns
-from datetime import date
 import yaml, sys,logging,time,os
 from croniter import croniter
+
 
 class TheSleeper:
     conn = ""
     config = ""
     timestamp = time.strftime("%d/%m/%Y %H:%M:%S")
-    time = ""
     sns_stop = list()
     sns_start = list()
 
     def __init__(self):
 
+        self.load_configuration()
+        self.set_timezone()
+        self.ec2_connect()
+        self.sns_connect()
+        self.search_for_untagged_to_stop()
+        self.search_for_tagged()
+        self.sns_message()
+
+    def load_configuration(self):
         try:
             configStr = open(os.path.dirname(__file__) + '/config.yml', 'r')
             self.config = yaml.load(configStr)
+            logfile = os.path.dirname(__file__) + "/" + self.config['general']['logfile']
+            logging.basicConfig(filename=logfile, level=logging.INFO)
+        except BaseException as error:
+            exit("Could not find, parse or load config.yml")
+
+    def set_timezone(self):
+        try:
             os.environ["TZ"]=self.config['general']['time_zone']
             time.tzset()
             self.time = time.time()
         except Exception as error:
-            #we are done
-            print ("Unexpected error:" + str(error))
-            exit("Failed Configuration")
-        logfile = os.path.dirname(__file__) + "/" + self.config['general']['logfile']
-        logging.basicConfig(filename=logfile, level=logging.INFO)
+            exit("Could not find, parse or load config.yml")
+
+    def ec2_connect(self):
         try:
             self.conn = boto.ec2.connect_to_region(self.config['general']['region'])
             self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
         except:
             #done again
             exit("Failed to connect to EC2")
+
+    def sns_connect(self):
         try:
             self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
         except:
@@ -48,25 +65,13 @@ class TheSleeper:
             #no sns configured or some issue
             pass
 
-
-    def stop_instance(self, instance):
-        if instance.state == "running":
-            self.sns_stop.append(instance.id)
-            instance.stop()
-
-    def start_instance(self, instance):
-        if instance.state == "stopped":
-            self.sns_start.append(instance.id)
-            instance.start()
-
     def search_for_tagged(self):
         try:
             reservations = self.conn.get_all_instances(filters={'tag-key' : self.config['general']['filter']})
             for reserve in reservations:
-                self.parse_sleeper_tags(reserve.instances[0])
-
+                self.search_sleeper_tags(reserve.instances[0])
         except (BaseException) as emsg:
-             logging.warning(self.timestamp + ': Cannot send message: ' + str(emsg))
+             logging.warning(self.timestamp + ': Cannot search for instances ' + str(emsg))
              sys.exit(2)
 
     def search_for_untagged_to_stop(self):
@@ -79,7 +84,7 @@ class TheSleeper:
              logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
              sys.exit(2)
 
-    def parse_sleeper_tags(self,instance):
+    def search_sleeper_tags(self,instance):
         value = instance.__dict__['tags'][self.config['general']['filter']]
         if value == "":
             #we always trash instances that are not tagged correctly
@@ -88,6 +93,9 @@ class TheSleeper:
         elif value == 'pass':
             #we take no specific action with this - by design
             return
+        self.parse_cron(instance,value)
+
+    def parse_cron(self,instance,value):
         try:
             crons = value.split('|')
             for i,v in enumerate(crons):
@@ -101,10 +109,7 @@ class TheSleeper:
 
     def cron_stop(self,instance,value):
         try:
-            iter = croniter(value,self.time)
-            point = iter.get_next(float)
-            newpoint = iter.get_prev(float)
-            misspast = newpoint - self.time
+            misspast = self.return_misspast(value)
             if (misspast < 0) and (misspast > -self.config['general']['threshold']):
                 self.stop_instance(instance)
         except (BaseException) as emsg:
@@ -113,15 +118,30 @@ class TheSleeper:
 
     def cron_start(self,instance,value):
         try:
-            iter = croniter(value,self.time)
-            point = iter.get_next(float)
-            newpoint = iter.get_prev(float)
-            misspast = newpoint - self.time
+            misspast = self.return_misspast(value)
             if (misspast < 0) and (misspast > -self.config['general']['threshold']):
                 self.start_instance(instance)
         except (BaseException) as emsg:
              logging.warning(self.timestamp + ': Base Exception ' + str(emsg))
              sys.exit(2)
+
+    def return_misspast(self,value):
+        iter = croniter(value,self.time)
+        point = iter.get_next(float)
+        newpoint = iter.get_prev(float)
+        misspast = newpoint - self.time
+        return misspast
+
+
+    def stop_instance(self, instance):
+        if instance.state == "running":
+            self.sns_stop.append(instance.id)
+            instance.stop()
+
+    def start_instance(self, instance):
+        if instance.state == "stopped":
+            self.sns_start.append(instance.id)
+            instance.start()
 
     def sns_message(self):
         message = ""
@@ -139,8 +159,6 @@ class TheSleeper:
 
 
 if __name__ == "__main__":
-    thesleeper = TheSleeper()
-    thesleeper.search_for_untagged_to_stop()
-    thesleeper.search_for_tagged()
-    thesleeper.sns_message()
+    ts = TheSleeper()
+
 
