@@ -1,11 +1,31 @@
 from unittest import TestCase
 from TheSleeper import TheSleeper
+import os
 
 __author__ = 'monkee'
 __project__ = 'TheSleeper'
 
 
 class TestTheSleeper(TestCase):
+    def test_load_configuration(self):
+        ts = TheSleeper
+        self.assertRaises(Exception,ts.load_configuration)
+
+    def test_set_timezone(self):
+        ts = TheSleeper
+        self.assertRaises(Exception,ts.set_timezone)
+
+    def test_check_timezone_set(self):
+        ts = TheSleeper()
+        self.assertIn("TZ",os.environ)
+
+    def test_check_timezone_value(self):
+        ts = TheSleeper()
+        self.assertEqual(os.environ["TZ"],"Australia/Brisbane")
+
+    def test_check_timezone_notset(self):
+        self.assertNotIn("TZ",os.environ)
+
     def test_stop_instance(self):
         ts = TheSleeper
         self.assertRaises(Exception,ts.stop_instance)
