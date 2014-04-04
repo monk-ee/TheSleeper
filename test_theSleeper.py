@@ -7,13 +7,6 @@ __project__ = 'TheSleeper'
 
 
 class TestTheSleeper(TestCase):
-    def test_load_configuration(self):
-        ts = TheSleeper
-        self.assertRaises(Exception,ts.load_configuration)
-
-    def test_set_timezone(self):
-        ts = TheSleeper
-        self.assertRaises(Exception,ts.set_timezone)
 
     def test_check_timezone_set(self):
         ts = TheSleeper()
@@ -27,7 +20,7 @@ class TestTheSleeper(TestCase):
         self.assertNotIn("TZ",os.environ)
 
     def test_stop_instance(self):
-        ts = TheSleeper
+        ts = TheSleeper()
         self.assertRaises(Exception,ts.stop_instance)
 
     def test_start_instance(self):
@@ -38,22 +31,37 @@ class TestTheSleeper(TestCase):
         ts = TheSleeper
         self.assertRaises(Exception,ts.search_for_tagged)
 
-    def test_search_for_untagged_to_stop(self):
-        ts = TheSleeper
-        self.assertRaises(Exception,ts.search_for_untagged_to_stop)
-
-    def test_parse_sleeper_tags(self):
-        ts = TheSleeper
-        self.assertRaises(Exception,ts.parse_sleeper_tags)
+    def test_search_sleeper_tags(self):
+        ts = TheSleeper()
+        self.assertRaises(Exception,ts.search_sleeper_tags)
 
     def test_cron_stop(self):
-        ts = TheSleeper
+        ts = TheSleeper()
         self.assertRaises(Exception,ts.cron_stop)
 
     def test_cron_start(self):
-        ts = TheSleeper
+        ts = TheSleeper()
         self.assertRaises(Exception,ts.cron_start)
 
-    def test_sns_message(self):
-        ts = TheSleeper
-        self.assertRaises(Exception,ts.sns_message)
+    def test_return_misspast(self):
+        ts = TheSleeper()
+        self.assertRaises(Exception,ts.return_misspast)
+
+    def test_return_misspast_goodvalue_every_night(self):
+        ts = TheSleeper()
+        val = ts.return_misspast("0 18 * * *")
+        self.assertGreater(0,val)
+
+    def test_return_misspast_goodvalue_every_worknight(self):
+        ts = TheSleeper()
+        val = ts.return_misspast("0 18 * * mon-fri")
+        self.assertGreater(0,val)
+
+    def test_return_misspast_goodvalue_start_end_worknight(self):
+        ts = TheSleeper()
+        val = ts.return_misspast("0 18 * * mon,fri")
+        self.assertGreater(0,val)
+
+    def test_return_misspast_badvalue(self):
+        ts = TheSleeper()
+        self.assertFalse(ts.return_misspast("0 12 * * * * * *"))
