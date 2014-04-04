@@ -6,4 +6,5 @@ general:
  debug: False
  threshold: 300
  sns_topic:
+ shutdown_untagged: True
  logfile: 'thesleeper.log'
