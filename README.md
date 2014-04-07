@@ -16,13 +16,13 @@ NOTE WELL: all untagged resources will be shutdown at any point in time. There s
 
 Format is cron like and is in the format 'stop','start': The following example shuts down all AMI's tagged with 'Time Start/Stop' at 9pm on weekdays and starts them again at 9am.
 
-    0 21 * * mon,fri | 0 9 * * mon,fri
+    0 21 * * mon-fri | 0 9 * * mon-fri
 
 
 
 If you want to just stop the instance  at 9pm weekdays and leave the start to a manual process then you would:
 
-    0 21 * * mon,fri
+    0 21 * * mon-fri
 
 If you want to ensure that the resource is not stopped add the following value:
 
