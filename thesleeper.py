@@ -63,7 +63,7 @@ class TheSleeper:
     def sns_connect(self):
         try:
             self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
-        except:
+        except (BaseException) as emsg:
             #done again
             logging.warning(self.timestamp + ': No SNS configured correctly - carry on - ' + str(emsg))
             #no sns configured or some issue
@@ -126,7 +126,7 @@ class TheSleeper:
         try:
             misspast = self.return_misspast(value)
             if misspast is False:
-               return
+                return
             if (misspast < 0) and (misspast > -self.config['general']['threshold']):
                 self.start_instance(instance)
         except (BaseException) as emsg:
