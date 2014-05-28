@@ -15,24 +15,40 @@ import yaml, sys,logging,time,os
 from croniter import croniter
 
 
-class TheSleeper:
+class thesleeper:
     conn = ""
     config = ""
     timestamp = time.strftime("%d/%m/%Y %H:%M:%S")
     sns_stop = list()
     sns_start = list()
+    profile_name = None
+    profile_list = []
 
     def __init__(self):
-        self.load_configuration()
+        self.load_credentials()
+        self.load_defaults()
         self.set_timezone()
-        self.ec2_connect()
         self.sns_connect()
-        if self.config['general']['shutdown_untagged'] is True:
-            self.search_for_untagged_to_stop()
-        self.search_for_tagged()
-        self.sns_message()
+        #begin multiple connection loop
+        for profile in self.profile_list:
+            self.profile_name = profile
+            self.ec2_connect()
+            if self.config['general']['shutdown_untagged'] is True:
+                self.search_for_untagged_to_stop()
+            self.search_for_tagged()
+            self.sns_message()
+            #end multiple connection loop
 
-    def load_configuration(self):
+    def load_credentials(self):
+        for section,details in boto.config._sections.iteritems():
+            if section == "Credentials":
+                self.profile_list.append('None')
+                continue
+            if 'profile ' in section:
+                self.profile_list.append(section[8:])
+                continue
+
+    def load_defaults(self):
         try:
             config_str = open(os.path.dirname(__file__) + '/config.yml', 'r')
             self.config = yaml.load(config_str)
@@ -54,15 +70,14 @@ class TheSleeper:
 
     def ec2_connect(self):
         try:
-            self.conn = boto.ec2.connect_to_region(self.config['general']['region'])
-            self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
+            self.conn = boto.ec2.connect_to_region(self.config['general']['region'],profile_name=self.profile_name)
         except:
             #done again
             exit("Failed to connect to EC2")
 
     def sns_connect(self):
         try:
-            self.snsconn = boto.sns.connect_to_region(self.config['general']['region'])
+            self.snsconn = boto.sns.connect_to_region(self.config['general']['region'],profile_name=self.profile_name)
         except (BaseException) as emsg:
             #done again
             logging.warning(self.timestamp + ': No SNS configured correctly - carry on - ' + str(emsg))
@@ -169,6 +184,6 @@ class TheSleeper:
 
 
 if __name__ == "__main__":
-    ts = TheSleeper()
+    ts = thesleeper()
 
 
