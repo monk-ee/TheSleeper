@@ -40,6 +40,14 @@ Requires: your boto config file (~/.boto) to contain your aws credentials
  + You shouldn't need to change threshold unless you change the cron timing -
      the threshold is the time in seconds past the action that you schedule  - it allows for clock drift etc
 
+Multiple Account Configuration
+==========
+Requires: your boto config file (~/.boto) add each additional account as a profile
+
+    [profile SecondAccount]
+    aws_access_key_id = <your access key>
+    aws_secret_access_key = <your secret key>
+
 Proxy
 ==========
 You may need to add proxy information to your .boto file
