@@ -28,6 +28,13 @@ If you want to ensure that the resource is not stopped add the following value:
 
      pass
 
+
+TheSleeper shuts down to a schedule, and starts to a schedule.
+
+Anything in between is considered to be manual shenanigans and sleeper don't care.
+
+The only exception to this is untagged instances which are terminated with extreme prejudice at any time of day.
+
 Configuration
 ==========
 Requires: your boto config file (~/.boto) to contain your aws credentials
