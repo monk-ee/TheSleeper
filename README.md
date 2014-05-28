@@ -48,6 +48,9 @@ Requires: your boto config file (~/.boto) add each additional account as a profi
     aws_access_key_id = <your access key>
     aws_secret_access_key = <your secret key>
 
+You will need to have at least one base set of credentials setup. I made the decision to only use one sns topic to avoid complexity;
+So the base credential should have the sns topic setup.
+
 Proxy
 ==========
 You may need to add proxy information to your .boto file
