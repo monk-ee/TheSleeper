@@ -10,7 +10,7 @@
 __author__ = 'monkee'
 __project__ = 'TheSleeper'
 
-import boto.ec2, boto.sns
+import boto.ec2, boto.sns, boto.utils
 import yaml, sys,logging,time,os
 from croniter import croniter
 
@@ -23,12 +23,14 @@ class thesleeper:
     sns_start = list()
     profile_name = None
     profile_list = []
+    sleeper_instance_id = None
 
     def __init__(self):
         self.load_credentials()
         self.load_defaults()
         self.set_timezone()
         self.sns_connect()
+        self.get_server_id()
         #begin multiple connection loop
         for profile in self.profile_list:
             self.profile_name = profile
@@ -59,6 +61,10 @@ class thesleeper:
         except:
             raise
             exit("Unexpected error:" + str(sys.exc_info()[0]))
+
+    def get_sleeper_instance_id(self):
+        self.sleeper_instance_id = boto.utils.get_instance_metadata()['instance-id']
+        pass
 
     def set_timezone(self):
         try:
@@ -159,6 +165,10 @@ class thesleeper:
             return False
 
     def stop_instance(self, instance):
+        if instance.id == self.sleeper_instance_id:
+            # dont ever ever ever ever ever ever ever shut yourself down ever
+            logging.warning(self.timestamp + ' Hmmm just tried to shut myself down - this is not cool')
+            return
         if instance.state == "running":
             self.sns_stop.append(instance.id)
             instance.stop()
