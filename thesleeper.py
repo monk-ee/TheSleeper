@@ -30,7 +30,7 @@ class thesleeper:
         self.load_defaults()
         self.set_timezone()
         self.sns_connect()
-        self.get_server_id()
+        self.get_sleeper_instance_id()
         #begin multiple connection loop
         for profile in self.profile_list:
             self.profile_name = profile
