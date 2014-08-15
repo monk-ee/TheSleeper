@@ -1,4 +1,4 @@
-PyYAML==3.10
-boto==2.27.0
-croniter==0.3.4
+PyYAML>=3.10
+boto>=2.27.0
+croniter>=0.3.4
 
