@@ -64,7 +64,6 @@ class thesleeper:
 
     def get_sleeper_instance_id(self):
         self.sleeper_instance_id = boto.utils.get_instance_metadata()['instance-id']
-        pass
 
     def set_timezone(self):
         try:
